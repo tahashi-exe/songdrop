@@ -8,21 +8,18 @@
 <meta name="keywords" content="music sharing, song recommendations, spotify, apple music, personalized playlist, retro music player" />
 <meta name="author" content="SongDrop" />
 
-<!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://yourusername.github.io/songdrop/" />
 <meta property="og:title" content="SongDrop — Share Music, Personally" />
 <meta property="og:description" content="Send songs to friends with a personal touch. Create beautiful, retro-styled music cards with custom notes and shareable links." />
 <meta property="og:image" content="https://yourusername.github.io/songdrop/preview.png" />
 
-<!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content="https://yourusername.github.io/songdrop/" />
 <meta property="twitter:title" content="SongDrop — Share Music, Personally" />
 <meta property="twitter:description" content="Send songs to friends with a personal touch. Create beautiful, retro-styled music cards with custom notes and shareable links." />
 <meta property="twitter:image" content="https://yourusername.github.io/songdrop/preview.png" />
 
-<!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🎵</text></svg>" />
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;600&family=VT323&display=swap" rel="stylesheet" />
@@ -85,6 +82,67 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 }
 .ptab.selected { border-color: var(--accent); color: var(--accent); background: rgba(232,196,122,0.08); }
 .ptab svg { width: 18px; height: 18px; }
+
+/* ── SONG ROWS ── */
+.song-list { display: flex; flex-direction: column; gap: 14px; }
+
+.song-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.song-row.resolved { border-color: rgba(232,196,122,0.35); }
+
+.song-row-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.song-row-num {
+  font-family: 'VT323', monospace; font-size: 18px; color: var(--accent);
+  min-width: 22px; line-height: 1;
+}
+.song-row-status {
+  flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.song-row-status.ok { color: rgba(140,210,160,0.85); }
+.song-row-status.err { color: #e87858; }
+.btn-remove-song {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 18px; line-height: 1; padding: 2px 6px; border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.btn-remove-song:hover { color: #e87858; background: rgba(232,120,88,0.12); }
+
+.song-row-url-wrap { position: relative; }
+.song-row-url-wrap .platform-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; opacity: 0.5; }
+.song-row-url {
+  width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 9px; color: var(--text); font-family: 'Lora', serif; font-size: 14px;
+  padding: 10px 42px 10px 40px; outline: none; transition: border-color 0.2s;
+}
+.song-row-url:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); }
+
+.btn-fetch-song {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: rgba(232,196,122,0.15); border: 1px solid rgba(232,196,122,0.3);
+  color: var(--accent); border-radius: 6px; padding: 5px 10px;
+  font-family: 'Lora', serif; font-size: 12px; cursor: pointer; white-space: nowrap;
+  transition: background 0.2s;
+}
+.btn-fetch-song:hover { background: rgba(232,196,122,0.25); }
+.btn-fetch-song:disabled { opacity: 0.4; cursor: default; }
+
+.btn-add-song {
+  width: 100%; padding: 13px; background: transparent;
+  border: 1px dashed rgba(232,196,122,0.3); border-radius: 12px;
+  color: var(--accent); font-family: 'Lora', serif; font-size: 14px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s, border-color 0.2s; margin-top: 4px;
+}
+.btn-add-song:hover { background: rgba(232,196,122,0.06); border-color: rgba(232,196,122,0.55); }
+.btn-add-song:disabled { opacity: 0.3; cursor: default; }
 
 /* STICKY */
 .sticky-note-editor {
@@ -191,13 +249,11 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
     0 40px 90px rgba(0,0,0,0.6),
     0 8px 24px rgba(0,0,0,0.4);
 }
-/* gloss sheen */
 .ipod-body::before {
   content: ''; position: absolute; inset: 0; border-radius: 38px;
   background: linear-gradient(158deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.12) 30%, transparent 60%);
   pointer-events: none; z-index: 1;
 }
-/* bottom reflection */
 .ipod-body::after {
   content: ''; position: absolute; left: 12%; right: 12%; bottom: -18px; height: 20px;
   background: inherit; filter: blur(14px); opacity: 0.35; border-radius: 50%;
@@ -222,13 +278,11 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
   border-radius: 7px; height: 96px; overflow: hidden; position: relative;
   display: flex; flex-direction: column;
 }
-/* LCD scanlines */
 .ipod-screen::after {
   content: ''; position: absolute; inset: 0;
   background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
   pointer-events: none; z-index: 5;
 }
-/* Screen glare */
 .ipod-screen::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40px;
   background: linear-gradient(180deg, rgba(255,255,255,0.14) 0%, transparent 100%);
@@ -248,11 +302,13 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
   position: absolute; top: 20px; left: 7px; width: 46px; height: 46px;
   border-radius: 3px; object-fit: cover; z-index: 4;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.55);
+  transition: opacity 0.3s ease;
 }
 .screen-albumart-placeholder {
   position: absolute; top: 20px; left: 7px; width: 46px; height: 46px;
   border-radius: 3px; background: linear-gradient(135deg,#2a3a2e,#1a2a1e);
   z-index: 4; display: flex; align-items: center; justify-content: center; font-size: 22px;
+  transition: opacity 0.3s ease;
 }
 .screen-info {
   position: absolute; top: 20px; left: 60px; right: 7px; bottom: 18px;
@@ -271,6 +327,15 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 @keyframes progressAnim { 0%,100% { width:28%; } 50% { width:55%; } }
 .screen-time { position: absolute; bottom: 1px; left: 60px; right: 7px; display: flex; justify-content: space-between; font-size: 8px; color: rgba(170,220,180,0.5); z-index: 4; font-family: 'VT323', monospace; }
 
+/* TRACK INDICATOR */
+.screen-track-indicator {
+  position: absolute; top: 20px; right: 7px; z-index: 7;
+  font-family: 'VT323', monospace; font-size: 9px;
+  color: rgba(170,220,180,0.7); background: rgba(0,0,0,0.3);
+  padding: 2px 5px; border-radius: 3px;
+  transition: opacity 0.3s;
+}
+
 /* CLICK WHEEL */
 .ipod-wheel-wrap { display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
 .ipod-wheel {
@@ -281,7 +346,25 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
     0 -3px 0 rgba(0,0,0,0.14) inset,
     3px 0 0 rgba(255,255,255,0.25) inset,
     0 5px 16px rgba(0,0,0,0.3);
+  /* cursor changes when playlist is active */
 }
+.ipod-wheel.playlist-active {
+  cursor: grab;
+}
+.ipod-wheel.playlist-active:active {
+  cursor: grabbing;
+}
+/* Subtle ring glow when interactive */
+.ipod-wheel.playlist-active {
+  box-shadow:
+    0 3px 0 rgba(255,255,255,0.5) inset,
+    0 -3px 0 rgba(0,0,0,0.14) inset,
+    3px 0 0 rgba(255,255,255,0.25) inset,
+    0 0 0 2px rgba(232,196,122,0.25),
+    0 5px 16px rgba(0,0,0,0.3),
+    0 0 20px rgba(232,196,122,0.08);
+}
+
 .wheel-label {
   position: absolute; font-size: 7px; color: rgba(0,0,0,0.42);
   font-family: 'Lora', serif; font-weight: 500; letter-spacing: 0.5px;
@@ -297,6 +380,31 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
   box-shadow: 0 2px 0 rgba(255,255,255,0.55) inset, 0 4px 10px rgba(0,0,0,0.25);
 }
 
+/* Wheel rotation feedback */
+.ipod-wheel-inner-ring {
+  position: absolute; inset: 10px; border-radius: 50%;
+  border: 1.5px solid transparent;
+  transition: border-color 0.3s, transform 0.1s;
+  pointer-events: none;
+}
+.ipod-wheel.playlist-active .ipod-wheel-inner-ring {
+  border-color: rgba(232,196,122,0.2);
+}
+
+/* Wheel hint text */
+.wheel-hint {
+  font-family: 'Lora', serif; font-size: 11px; color: var(--muted);
+  text-align: center; margin-top: 10px; letter-spacing: 0.3px;
+  opacity: 0; transition: opacity 0.4s;
+  animation: hintFade 3s 1.5s ease-out forwards;
+}
+@keyframes hintFade {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* BELOW IPOD */
 .below-ipod { width: 270px; display: flex; flex-direction: column; align-items: flex-start; }
 
@@ -304,7 +412,7 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
   display: inline-flex; align-items: center; gap: 6px; margin-top: 22px;
   padding: 7px 14px; border-radius: 20px; font-size: 12px;
   font-family: 'Lora', serif; letter-spacing: 0.5px;
-  cursor: pointer; text-decoration: none; transition: opacity 0.2s;
+  cursor: pointer; text-decoration: none; transition: opacity 0.2s, transform 0.2s;
   animation: floatUp 0.6s 0.5s cubic-bezier(.22,1,.36,1) both;
 }
 @keyframes floatUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
@@ -348,6 +456,13 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
 
+/* Art transition flash */
+@keyframes artFlash {
+  0%   { opacity: 0; transform: scale(0.88); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.art-change { animation: artFlash 0.25s ease-out forwards; }
+
 @media (max-width: 480px) {
   header { padding: 24px 20px 0; }
   .creator-wrap { padding: 32px 16px 60px; }
@@ -380,11 +495,16 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
           Apple Music
         </button>
       </div>
-      <div class="input-wrap">
-        <svg class="platform-icon" viewBox="0 0 24 24" fill="rgba(240,236,228,0.4)"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="rgba(240,236,228,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-        <input type="url" id="songUrl" placeholder="Paste your Spotify or Apple Music link…" />
-      </div>
-      <div id="fetch-status" style="font-size:13px;color:var(--muted);margin-top:8px;min-height:18px;"></div>
+    </div>
+
+    <!-- SONG LIST -->
+    <div class="form-group">
+      <div class="section-label">Songs</div>
+      <div class="song-list" id="songList"></div>
+      <button class="btn-add-song" id="btnAddSong" onclick="addSongRow()" style="margin-top:12px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add another song
+      </button>
     </div>
 
     <div class="form-group">
@@ -421,34 +541,28 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 
   <div class="ipod-scene" id="ipodScene">
 
-    <!-- EARPHONE WIRES (SVG above the iPod) -->
+    <!-- EARPHONE WIRES -->
     <div class="earphone-scene">
       <svg class="earphone-svg" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg">
-        <!-- left cable: from jack center (150,152) curves left then up -->
         <path id="leftWire"
           d="M 150 152 C 148 120, 110 115, 80 92 C 55 72, 30 48, 12 16"
           fill="none" stroke="#303030" stroke-width="2.8" stroke-linecap="round"
           style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6))" />
-        <!-- right cable -->
         <path id="rightWire"
           d="M 150 152 C 152 120, 190 115, 220 92 C 245 72, 268 48, 286 16"
           fill="none" stroke="#303030" stroke-width="2.8" stroke-linecap="round"
           style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6))" />
-        <!-- inline mic/remote on left cable -->
         <rect x="70" y="100" width="14" height="24" rx="5" fill="#2e2e2e" stroke="#444" stroke-width="0.8"/>
         <line x1="77" y1="104" x2="77" y2="120" stroke="#555" stroke-width="1.2" stroke-linecap="round"/>
         <circle cx="77" cy="122" r="1.5" fill="#666"/>
-        <!-- left earbud -->
         <ellipse cx="12" cy="14" rx="10" ry="12" fill="#2e2e2e" stroke="#454545" stroke-width="1.2"/>
         <ellipse cx="12" cy="14" rx="5.5" ry="6.5" fill="#202020"/>
         <ellipse cx="12" cy="14" rx="2.5" ry="3" fill="#3a3a3a"/>
         <ellipse cx="10.5" cy="12" rx="1.2" ry="1.2" fill="#555" opacity="0.6"/>
-        <!-- right earbud -->
         <ellipse cx="286" cy="14" rx="10" ry="12" fill="#2e2e2e" stroke="#454545" stroke-width="1.2"/>
         <ellipse cx="286" cy="14" rx="5.5" ry="6.5" fill="#202020"/>
         <ellipse cx="286" cy="14" rx="2.5" ry="3" fill="#3a3a3a"/>
         <ellipse cx="284.5" cy="12" rx="1.2" ry="1.2" fill="#555" opacity="0.6"/>
-        <!-- 3.5mm jack plug going into iPod -->
         <rect x="145" y="148" width="10" height="16" rx="5" fill="#252525"/>
         <circle cx="150" cy="149" r="3.5" fill="#1a1a1a"/>
         <line x1="150" y1="152" x2="150" y2="163" stroke="#333" stroke-width="2"/>
@@ -457,8 +571,6 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 
     <!-- THE iPOD -->
     <div class="ipod-body" id="ipodBody">
-
-      <!-- jack hole at top -->
       <div class="ipod-jack-area">
         <div class="ipod-jack"></div>
       </div>
@@ -470,6 +582,7 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
             <span id="screenClock">12:00</span>
             <div class="screen-battery"><span></span><span></span><span></span></div>
           </div>
+          <div class="screen-track-indicator" id="trackIndicator" style="display:none;"></div>
           <img id="screenAlbumArt" class="screen-albumart" src="" alt="" style="display:none;" />
           <div class="screen-albumart-placeholder" id="screenPlaceholder">🎵</div>
           <div class="screen-info">
@@ -485,6 +598,7 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
       <!-- Click Wheel -->
       <div class="ipod-wheel-wrap">
         <div class="ipod-wheel" id="ipodWheel">
+          <div class="ipod-wheel-inner-ring" id="wheelInnerRing"></div>
           <span class="wheel-label top">MENU</span>
           <span class="wheel-label left">◄◄</span>
           <span class="wheel-label right">▶▶</span>
@@ -494,6 +608,11 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
       </div>
 
     </div><!-- /ipod-body -->
+
+    <!-- wheel hint (shows only for playlists) -->
+    <div class="wheel-hint" id="wheelHint" style="display:none;">
+      ↻ rotate the wheel to browse tracks
+    </div>
 
     <!-- badge + sticky note below iPod -->
     <div class="below-ipod" id="belowIpod"></div>
@@ -523,6 +642,7 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
     <h2>Enter Song Details</h2>
     <p style="margin-bottom:16px;">Since we couldn't auto-fetch the song info, please enter it manually.</p>
     
+    <input type="hidden" id="manualEntryRowId" />
     <input type="hidden" id="manualEntryUrl" />
     <input type="hidden" id="manualEntryPlatform" />
     
@@ -560,6 +680,15 @@ let currentPlatform = 'spotify';
 let selectedBg = 'bg-midnight';
 let selectedIpodColor = '#e8e4dc';
 let cardData = {};
+
+// Song rows state: array of { id, url, meta: null | { title, artist, cover, link, platform } }
+let songRows = [];
+let songRowCounter = 0;
+const MAX_SONGS = 5;
+
+// Viewer playlist state
+let viewerTracks = [];
+let currentTrackIdx = 0;
 
 const BACKGROUNDS = [
   { id:'bg-midnight', label:'Midnight', style:'background:radial-gradient(ellipse at 20% 50%,#1a1033,#0a0a0f)' },
@@ -622,14 +751,137 @@ function buildIpodPicker() {
 }
 
 // ─────────────────────────────────────────────
+// SONG ROWS (CREATOR)
+// ─────────────────────────────────────────────
+function addSongRow() {
+  if (songRows.length >= MAX_SONGS) return;
+
+  const id = ++songRowCounter;
+  songRows.push({ id, url: '', meta: null });
+
+  const list = document.getElementById('songList');
+  const row = document.createElement('div');
+  row.className = 'song-row';
+  row.id = `songRow_${id}`;
+  row.innerHTML = `
+    <div class="song-row-header">
+      <span class="song-row-num">${String(songRows.length).padStart(2,'0')}</span>
+      <span class="song-row-status" id="rowStatus_${id}">Paste a link below</span>
+      ${songRows.length > 1 ? `<button class="btn-remove-song" onclick="removeSongRow(${id})" title="Remove">✕</button>` : ''}
+    </div>
+    <div class="song-row-url-wrap">
+      <svg class="platform-icon" viewBox="0 0 24 24" fill="rgba(240,236,228,0.4)"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="rgba(240,236,228,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <input class="song-row-url" type="url" id="rowUrl_${id}"
+        placeholder="Paste your ${currentPlatform === 'spotify' ? 'Spotify' : 'Apple Music'} link…"
+        oninput="onRowUrlInput(${id})" />
+      <button class="btn-fetch-song" id="rowFetchBtn_${id}" onclick="fetchRowSong(${id})" disabled>Fetch</button>
+    </div>
+  `;
+  list.appendChild(row);
+
+  // Row entrance
+  row.style.opacity = '0'; row.style.transform = 'translateY(8px)';
+  requestAnimationFrame(() => {
+    row.style.transition = 'opacity 0.25s, transform 0.25s';
+    row.style.opacity = '1'; row.style.transform = 'translateY(0)';
+  });
+
+  updateAddBtn();
+}
+
+function removeSongRow(id) {
+  const idx = songRows.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  songRows.splice(idx, 1);
+  const el = document.getElementById(`songRow_${id}`);
+  if (el) {
+    el.style.transition = 'opacity 0.2s, transform 0.2s';
+    el.style.opacity = '0'; el.style.transform = 'translateY(6px)';
+    setTimeout(() => { el.remove(); renumberRows(); }, 220);
+  }
+  updateAddBtn();
+}
+
+function renumberRows() {
+  songRows.forEach((r, i) => {
+    const numEl = document.querySelector(`#songRow_${r.id} .song-row-num`);
+    if (numEl) numEl.textContent = String(i + 1).padStart(2,'0');
+    // Re-add remove button for first row if it now has siblings
+    const hdr = document.querySelector(`#songRow_${r.id} .song-row-header`);
+    const existBtn = document.querySelector(`#songRow_${r.id} .btn-remove-song`);
+    if (songRows.length > 1 && !existBtn && hdr) {
+      const btn = document.createElement('button');
+      btn.className = 'btn-remove-song';
+      btn.title = 'Remove';
+      btn.textContent = '✕';
+      btn.onclick = () => removeSongRow(r.id);
+      hdr.appendChild(btn);
+    }
+  });
+}
+
+function updateAddBtn() {
+  const btn = document.getElementById('btnAddSong');
+  btn.disabled = songRows.length >= MAX_SONGS;
+  btn.textContent = songRows.length >= MAX_SONGS
+    ? `✦ Max ${MAX_SONGS} songs`
+    : '+ Add another song';
+}
+
+function onRowUrlInput(id) {
+  const val = document.getElementById(`rowUrl_${id}`).value.trim();
+  const row = songRows.find(r => r.id === id);
+  if (row) { row.url = val; row.meta = null; }
+  const btn = document.getElementById(`rowFetchBtn_${id}`);
+  if (btn) btn.disabled = !val;
+  const status = document.getElementById(`rowStatus_${id}`);
+  if (status && val) { status.className = 'song-row-status'; status.textContent = 'Ready to fetch'; }
+  const rowEl = document.getElementById(`songRow_${id}`);
+  if (rowEl) rowEl.classList.remove('resolved');
+}
+
+async function fetchRowSong(id) {
+  const row = songRows.find(r => r.id === id);
+  if (!row) return;
+  const url = document.getElementById(`rowUrl_${id}`).value.trim();
+  if (!url) return;
+
+  const btn = document.getElementById(`rowFetchBtn_${id}`);
+  const status = document.getElementById(`rowStatus_${id}`);
+  btn.disabled = true; btn.textContent = '…';
+  status.className = 'song-row-status'; status.textContent = 'Fetching…';
+
+  try {
+    const parsed = parseSongUrl(url);
+    let meta;
+    if (parsed?.platform === 'spotify')    meta = await fetchSpotifyMeta(parsed.id);
+    else if (parsed?.platform === 'apple') meta = await fetchAppleMeta(url);
+    else meta = { title:'Shared Song', artist:'', cover:'', link:url, platform:currentPlatform };
+
+    row.meta = meta;
+    status.className = 'song-row-status ok';
+    status.textContent = `✓ ${meta.title}${meta.artist ? ' · ' + meta.artist : ''}`;
+    document.getElementById(`songRow_${id}`).classList.add('resolved');
+    btn.textContent = '✓';
+  } catch(e) {
+    console.error('Fetch error:', e);
+    status.className = 'song-row-status err';
+    status.innerHTML = `⚠ Couldn't fetch. <a href="#" onclick="showManualEntry(${id}); return false;" style="color:var(--accent);text-decoration:underline;">Enter manually</a>`;
+    btn.disabled = false; btn.textContent = 'Retry';
+  }
+}
+
+// ─────────────────────────────────────────────
 // CONTROLS
 // ─────────────────────────────────────────────
 function selectPlatform(p) {
   currentPlatform = p;
   document.querySelectorAll('.ptab').forEach(t => t.classList.remove('selected'));
   document.querySelector(`.ptab[data-platform="${p}"]`).classList.add('selected');
-  document.getElementById('songUrl').placeholder =
-    p === 'spotify' ? 'Paste your Spotify link…' : 'Paste your Apple Music link…';
+  // update all row placeholders
+  document.querySelectorAll('.song-row-url').forEach(inp => {
+    inp.placeholder = `Paste your ${p === 'spotify' ? 'Spotify' : 'Apple Music'} link…`;
+  });
 }
 
 function toggleSticky() {
@@ -670,37 +922,48 @@ async function fetchAppleMeta(url) {
 // GENERATE LINK
 // ─────────────────────────────────────────────
 async function generateLink() {
-  const url = document.getElementById('songUrl').value.trim();
-  if (!url) { showToast('Please paste a song link first'); return; }
-  
-  const status = document.getElementById('fetch-status');
-  status.textContent = 'Fetching song info…';
-  
-  try {
-    const parsed = parseSongUrl(url);
-    let meta;
-    
-    if (parsed?.platform === 'spotify')    meta = await fetchSpotifyMeta(parsed.id);
-    else if (parsed?.platform === 'apple') meta = await fetchAppleMeta(url);
-    else meta = { title:'Shared Song', artist:'', cover:'', link:url, platform:currentPlatform };
-    
-    status.textContent = `Found: ${meta.title}${meta.artist?' · '+meta.artist:''}`;
-    proceedWithMeta(meta, url);
-    
-  } catch(e) {
-    console.error('Fetch error:', e);
-    // CORS is likely blocking - show manual entry form
-    status.innerHTML = `<span style="color:#e87858;">⚠ Couldn't auto-fetch (CORS blocked). <a href="#" onclick="showManualEntry(); return false;" style="color:var(--accent);text-decoration:underline;">Enter song details manually</a></span>`;
+  const resolved = songRows.filter(r => r.meta);
+  const unresolved = songRows.filter(r => !r.meta && r.url);
+
+  if (resolved.length === 0 && unresolved.length === 0) {
+    showToast('Please add at least one song link'); return;
   }
+
+  // Auto-fetch any rows that have a URL but no meta yet
+  if (unresolved.length > 0) {
+    showToast('Fetching remaining songs…');
+    await Promise.allSettled(unresolved.map(r => fetchRowSong(r.id)));
+  }
+
+  const tracks = songRows.filter(r => r.meta).map(r => r.meta);
+  if (tracks.length === 0) {
+    showToast('No songs could be resolved. Please enter song details manually.'); return;
+  }
+
+  const note = document.getElementById('stickyToggle').checked
+    ? document.getElementById('stickyText').value.trim() : '';
+
+  cardData = { tracks, note, bg: selectedBg, ipodColor: selectedIpodColor };
+  const encoded = btoa(encodeURIComponent(JSON.stringify(cardData)));
+  document.getElementById('generatedLink').textContent =
+    `${location.origin}${location.pathname}#drop=${encoded}`;
+  document.getElementById('shareModal').classList.add('open');
 }
 
-function showManualEntry() {
-  const url = document.getElementById('songUrl').value.trim();
+// ─────────────────────────────────────────────
+// MANUAL ENTRY
+// ─────────────────────────────────────────────
+function showManualEntry(rowId) {
+  const row = songRows.find(r => r.id === rowId);
+  const url = row?.url || document.getElementById(`rowUrl_${rowId}`)?.value.trim() || '';
   const parsed = parseSongUrl(url);
   const platform = parsed?.platform || currentPlatform;
-  
+  document.getElementById('manualEntryRowId').value = rowId;
   document.getElementById('manualEntryUrl').value = url;
   document.getElementById('manualEntryPlatform').value = platform;
+  document.getElementById('manualTitle').value = '';
+  document.getElementById('manualArtist').value = '';
+  document.getElementById('manualCover').value = '';
   document.getElementById('manualEntryModal').classList.add('open');
 }
 
@@ -710,25 +973,29 @@ function submitManualEntry() {
   const cover = document.getElementById('manualCover').value.trim();
   const url = document.getElementById('manualEntryUrl').value.trim();
   const platform = document.getElementById('manualEntryPlatform').value;
-  
+  const rowId = parseInt(document.getElementById('manualEntryRowId').value);
+
   if (!title) { showToast('Please enter a song title'); return; }
-  
+
   const meta = { title, artist, cover, link: url, platform };
+  const row = songRows.find(r => r.id === rowId);
+  if (row) {
+    row.meta = meta;
+    const status = document.getElementById(`rowStatus_${rowId}`);
+    if (status) {
+      status.className = 'song-row-status ok';
+      status.textContent = `✓ ${title}${artist ? ' · ' + artist : ''}`;
+    }
+    document.getElementById(`songRow_${rowId}`)?.classList.add('resolved');
+    const btn = document.getElementById(`rowFetchBtn_${rowId}`);
+    if (btn) { btn.textContent = '✓'; btn.disabled = true; }
+  }
   document.getElementById('manualEntryModal').classList.remove('open');
-  document.getElementById('fetch-status').textContent = `✓ Using: ${title}${artist?' · '+artist:''}`;
-  proceedWithMeta(meta, url);
 }
 
-function proceedWithMeta(meta, url) {
-  const note = document.getElementById('stickyToggle').checked
-    ? document.getElementById('stickyText').value.trim() : '';
-  cardData = { ...meta, note, bg:selectedBg, ipodColor:selectedIpodColor };
-  const encoded = btoa(encodeURIComponent(JSON.stringify(cardData)));
-  document.getElementById('generatedLink').textContent =
-    `${location.origin}${location.pathname}#drop=${encoded}`;
-  document.getElementById('shareModal').classList.add('open');
-}
-
+// ─────────────────────────────────────────────
+// MODAL CONTROLS
+// ─────────────────────────────────────────────
 function copyLink() {
   navigator.clipboard.writeText(document.getElementById('generatedLink').textContent)
     .then(() => showToast('Link copied!'));
@@ -740,6 +1007,7 @@ function goBack() {
   v.classList.remove('active');
   v.classList.remove(...BACKGROUNDS.map(b=>b.id));
   document.getElementById('creator').classList.add('active');
+  destroyWheelListeners();
 }
 
 // ─────────────────────────────────────────────
@@ -748,11 +1016,9 @@ function goBack() {
 function renderViewer(data) {
   const viewer = document.getElementById('viewer');
 
-  // background
   viewer.classList.remove(...BACKGROUNDS.map(b=>b.id));
   viewer.classList.add(data.bg || 'bg-midnight');
 
-  // iPod color
   const color = data.ipodColor || '#e8e4dc';
   const body = document.getElementById('ipodBody');
   const wheel = document.getElementById('ipodWheel');
@@ -761,39 +1027,198 @@ function renderViewer(data) {
   wheel.style.background = shiftBrightness(color, -18);
   center.style.background = shiftBrightness(color, 8);
 
-  // wire color adapts to dark iPod
   const wc = isColorDark(color) ? '#666' : '#2e2e2e';
   document.getElementById('leftWire').setAttribute('stroke', wc);
   document.getElementById('rightWire').setAttribute('stroke', wc);
 
-  // screen
-  const artEl = document.getElementById('screenAlbumArt');
-  const ph = document.getElementById('screenPlaceholder');
-  if (data.cover) {
-    artEl.src = data.cover; artEl.style.display = 'block'; ph.style.display = 'none';
-  } else {
-    artEl.style.display = 'none'; ph.style.display = 'flex';
-  }
-  document.getElementById('screenTitle').textContent = data.title || '––';
-  document.getElementById('screenArtist').textContent = data.artist || '';
-  updateClock();
+  // Normalise: support both old (single track) and new (tracks array) format
+  viewerTracks = data.tracks || (data.title ? [data] : []);
+  currentTrackIdx = 0;
 
-  // below iPod
-  const below = document.getElementById('belowIpod');
-  const bc = data.platform === 'apple' ? 'apple' : 'spotify';
-  const bi = data.platform === 'apple'
-    ? `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
-  const bl = data.platform === 'apple' ? 'Open in Apple Music' : 'Open in Spotify';
-  const stickyHTML = data.note
-    ? `<div class="sticky-display"><p>${escHtml(data.note)}</p></div>` : '';
-  below.innerHTML = `
-    <a href="${escHtml(data.link)}" target="_blank" class="platform-badge ${bc}">${bi} ${bl}</a>
-    ${stickyHTML}
-  `;
+  updateScreenTrack(0, false);
+
+  // Playlist interactivity
+  const isPlaylist = viewerTracks.length > 1;
+  if (isPlaylist) {
+    wheel.classList.add('playlist-active');
+    document.getElementById('trackIndicator').style.display = 'block';
+    document.getElementById('wheelHint').style.display = 'block';
+    initWheelDrag();
+  } else {
+    wheel.classList.remove('playlist-active');
+    document.getElementById('trackIndicator').style.display = 'none';
+    document.getElementById('wheelHint').style.display = 'none';
+  }
+
+  updateClock();
 
   document.getElementById('creator').classList.remove('active');
   viewer.classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+// TRACK SWITCHING
+// ─────────────────────────────────────────────
+function updateScreenTrack(idx, animate) {
+  const track = viewerTracks[idx];
+  if (!track) return;
+
+  const artEl = document.getElementById('screenAlbumArt');
+  const ph = document.getElementById('screenPlaceholder');
+  const indicator = document.getElementById('trackIndicator');
+  const below = document.getElementById('belowIpod');
+
+  // Album art with flash animation
+  if (animate) {
+    artEl.classList.remove('art-change');
+    ph.style.opacity = '0';
+    void artEl.offsetWidth; // reflow
+  }
+
+  if (track.cover) {
+    artEl.src = track.cover;
+    artEl.style.display = 'block';
+    ph.style.display = 'none';
+    if (animate) {
+      artEl.classList.add('art-change');
+    }
+  } else {
+    artEl.style.display = 'none';
+    ph.style.display = 'flex';
+    ph.style.opacity = '1';
+  }
+
+  document.getElementById('screenTitle').textContent = track.title || '––';
+  document.getElementById('screenArtist').textContent = track.artist || '';
+
+  if (viewerTracks.length > 1) {
+    indicator.textContent = `${idx + 1}/${viewerTracks.length}`;
+  }
+
+  // Update badge link
+  const bc = track.platform === 'apple' ? 'apple' : 'spotify';
+  const bi = track.platform === 'apple'
+    ? `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
+  const bl = track.platform === 'apple' ? 'Open in Apple Music' : 'Open in Spotify';
+
+  // sticky note only renders once (not per track)
+  const stickyHTML = (idx === 0 || !below._stickyRendered) && cardData.note
+    ? `<div class="sticky-display"><p>${escHtml(cardData.note)}</p></div>` : (below._stickyRendered ? below.querySelector('.sticky-display')?.outerHTML || '' : '');
+
+  below.innerHTML = `
+    <a href="${escHtml(track.link || '')}" target="_blank" class="platform-badge ${bc}">${bi} ${bl}</a>
+    ${cardData.note ? `<div class="sticky-display"><p>${escHtml(cardData.note)}</p></div>` : ''}
+  `;
+  below._stickyRendered = true;
+}
+
+// ─────────────────────────────────────────────
+// WHEEL DRAG INTERACTION
+// ─────────────────────────────────────────────
+let wheelState = {
+  active: false,
+  startAngle: 0,
+  accumulated: 0,
+  lastTrackAt: 0,
+  listeners: []
+};
+const DEGREES_PER_TRACK = 45; // degrees of rotation to advance one track
+
+function getAngle(e, rect) {
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  let x, y;
+  if (e.touches) {
+    x = e.touches[0].clientX - cx;
+    y = e.touches[0].clientY - cy;
+  } else {
+    x = e.clientX - cx;
+    y = e.clientY - cy;
+  }
+  return Math.atan2(y, x) * (180 / Math.PI);
+}
+
+function initWheelDrag() {
+  destroyWheelListeners();
+  const wheel = document.getElementById('ipodWheel');
+  const ring = document.getElementById('wheelInnerRing');
+
+  const onStart = (e) => {
+    // ignore clicks on center button
+    const center = document.getElementById('wheelCenter');
+    if (center.contains(e.target)) return;
+    e.preventDefault();
+    wheelState.active = true;
+    wheelState.startAngle = getAngle(e, wheel.getBoundingClientRect());
+    wheelState.accumulated = 0;
+    wheelState.lastTrackAt = 0;
+    ring.style.transform = 'rotate(0deg)';
+  };
+
+  const onMove = (e) => {
+    if (!wheelState.active) return;
+    e.preventDefault();
+    const angle = getAngle(e, wheel.getBoundingClientRect());
+    let delta = angle - wheelState.startAngle;
+    // Wrap around -180/180 boundary
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    wheelState.accumulated += delta;
+    wheelState.startAngle = angle;
+
+    // Visual feedback: rotate inner ring
+    ring.style.transform = `rotate(${wheelState.accumulated}deg)`;
+
+    // Track switching threshold
+    const tracksToMove = Math.floor(Math.abs(wheelState.accumulated - wheelState.lastTrackAt) / DEGREES_PER_TRACK);
+    if (tracksToMove > 0) {
+      const dir = wheelState.accumulated > wheelState.lastTrackAt ? 1 : -1;
+      wheelState.lastTrackAt += dir * tracksToMove * DEGREES_PER_TRACK;
+      const newIdx = ((currentTrackIdx + dir * tracksToMove) % viewerTracks.length + viewerTracks.length) % viewerTracks.length;
+      if (newIdx !== currentTrackIdx) {
+        currentTrackIdx = newIdx;
+        updateScreenTrack(currentTrackIdx, true);
+        // Haptic feedback on supporting devices
+        if (navigator.vibrate) navigator.vibrate(12);
+      }
+    }
+  };
+
+  const onEnd = () => {
+    if (!wheelState.active) return;
+    wheelState.active = false;
+    // Spring back the ring glow but keep angle for feel
+    ring.style.transition = 'transform 0.4s cubic-bezier(.22,1,.36,1)';
+    ring.style.transform = 'rotate(0deg)';
+    setTimeout(() => { ring.style.transition = ''; }, 400);
+  };
+
+  // Mouse
+  wheel.addEventListener('mousedown', onStart);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+
+  // Touch
+  wheel.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
+
+  wheelState.listeners = [
+    [wheel, 'mousedown', onStart],
+    [document, 'mousemove', onMove],
+    [document, 'mouseup', onEnd],
+    [wheel, 'touchstart', onStart],
+    [document, 'touchmove', onMove],
+    [document, 'touchend', onEnd],
+  ];
+}
+
+function destroyWheelListeners() {
+  wheelState.listeners.forEach(([el, evt, fn]) => el.removeEventListener(evt, fn));
+  wheelState.listeners = [];
+  const wheel = document.getElementById('ipodWheel');
+  if (wheel) wheel.classList.remove('playlist-active');
 }
 
 // ─────────────────────────────────────────────
@@ -829,13 +1254,18 @@ function isColorDark(hex) {
 // ─────────────────────────────────────────────
 buildBgPicker();
 buildIpodPicker();
+addSongRow(); // start with one row
 setInterval(updateClock, 30000);
 
 function loadFromHash() {
   const m = location.hash.match(/#drop=(.+)/);
   if (!m) return false;
-  try { renderViewer(JSON.parse(decodeURIComponent(atob(m[1])))); return true; }
-  catch(e) { return false; }
+  try {
+    const data = JSON.parse(decodeURIComponent(atob(m[1])));
+    cardData = data;
+    renderViewer(data);
+    return true;
+  } catch(e) { return false; }
 }
 
 if (!loadFromHash()) document.getElementById('creator').classList.add('active');

@@ -22,7 +22,7 @@
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🎵</text></svg>" />
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;600&family=VT323&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;600&family=VT323&family=Special+Elite&family=DM+Sans:wght@400;500&family=Great+Vibes&family=Permanent+Marker&display=swap" rel="stylesheet" />
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -162,6 +162,38 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 }
 .sticky-note-editor textarea:focus { outline: none; }
 .sticky-note-editor textarea::placeholder { color: rgba(42,32,4,0.4); }
+/* STICKY TOOLBAR */
+.sticky-toolbar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  padding: 8px 12px; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-radius: 10px;
+  flex-wrap: wrap;
+}
+.sticky-toolbar-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); font-family: 'Playfair Display', serif; margin-right: 2px;
+  flex-shrink: 0;
+}
+.sticky-toolbar-divider {
+  width: 1px; height: 22px; background: var(--border); flex-shrink: 0;
+}
+.sticky-font-options { display: flex; gap: 6px; align-items: center; }
+.sticky-font-btn {
+  padding: 5px 10px; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--surface); color: var(--muted); font-size: 12px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap; line-height: 1;
+}
+.sticky-font-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.sticky-font-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(232,196,122,0.1); }
+.sticky-color-options { display: flex; gap: 7px; align-items: center; }
+.sticky-color-btn {
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.sticky-color-btn:hover { transform: scale(1.2); }
+.sticky-color-btn.selected { border-color: var(--accent); transform: scale(1.15); }
+
 .sticky-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 14px; user-select: none; }
 .sticky-toggle input { display: none; }
 .toggle-track { width: 38px; height: 22px; background: var(--border); border-radius: 20px; position: relative; transition: background 0.2s; }
@@ -446,6 +478,39 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 #viewer.bg-ivory .back-btn,
 #viewer.bg-paper .back-btn { background: rgba(255,255,255,0.55); color: rgba(0,0,0,0.6); border-color: rgba(0,0,0,0.12); }
 
+/* EXPORT BUTTON */
+.btn-export {
+  position: fixed; bottom: 28px; right: 28px;
+  background: rgba(14,14,16,0.75); border: 1px solid rgba(255,255,255,0.14);
+  color: var(--text); border-radius: 40px;
+  padding: 11px 20px; font-family: 'Lora', serif; font-size: 13px;
+  cursor: pointer; backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 8px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  z-index: 50; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  animation: floatUp 0.5s 1s cubic-bezier(.22,1,.36,1) both;
+}
+.btn-export:hover { background: rgba(232,196,122,0.15); border-color: rgba(232,196,122,0.4); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+.btn-export svg { width: 15px; height: 15px; opacity: 0.8; }
+#viewer.bg-ivory .btn-export,
+#viewer.bg-paper .btn-export { background: rgba(255,255,255,0.7); color: #1a1612; border-color: rgba(0,0,0,0.12); }
+
+/* EXPORT PROGRESS OVERLAY */
+.export-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 300; backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+}
+.export-overlay.open { display: flex; }
+.export-spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid rgba(232,196,122,0.2);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.export-overlay p { font-family: 'Lora', serif; font-size: 14px; color: var(--accent); }
+
 /* TOAST */
 .toast {
   position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
@@ -515,7 +580,15 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
         <span class="toggle-label">Add a sticky note</span>
       </label>
       <div id="stickyEditor" style="display:none;">
-        <div class="sticky-note-editor">
+        <!-- STICKY TOOLBAR -->
+        <div class="sticky-toolbar">
+          <span class="sticky-toolbar-label">Font</span>
+          <div class="sticky-font-options" id="stickyFontPicker"></div>
+          <div class="sticky-toolbar-divider"></div>
+          <span class="sticky-toolbar-label">Colour</span>
+          <div class="sticky-color-options" id="stickyColorPicker"></div>
+        </div>
+        <div class="sticky-note-editor" id="stickyNoteEditor">
           <textarea id="stickyText" placeholder="Write something to go along with this song…" maxlength="200"></textarea>
         </div>
       </div>
@@ -538,6 +611,14 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
 <!-- ═══════════════ VIEWER PAGE ════════════════ -->
 <div id="viewer" class="page">
   <button class="back-btn" onclick="goBack()">← Create your own</button>
+  <button class="btn-export" onclick="exportAsImage()" id="btnExport">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Save as Image
+  </button>
 
   <div class="ipod-scene" id="ipodScene">
 
@@ -669,6 +750,11 @@ textarea { padding: 14px 16px; resize: vertical; min-height: 90px; }
   </div>
 </div>
 
+<div class="export-overlay" id="exportOverlay">
+  <div class="export-spinner"></div>
+  <p>Saving your SongDrop…</p>
+</div>
+
 <div class="toast" id="toast">Link copied!</div>
 </div>
 
@@ -689,6 +775,26 @@ const MAX_SONGS = 5;
 // Viewer playlist state
 let viewerTracks = [];
 let currentTrackIdx = 0;
+
+// Sticky note customisation
+const STICKY_FONTS = [
+  { id: 'caveat',   label: 'Aa',  name: 'Casual',     family: "'Caveat', cursive",          size: '18px' },
+  { id: 'elite',    label: '⌨',   name: 'Typewriter', family: "'Special Elite', cursive",   size: '14px' },
+  { id: 'dm',       label: 'Aa',  name: 'Print',      family: "'DM Sans', sans-serif",      size: '14px' },
+  { id: 'vibes',    label: '𝒜',   name: 'Cursive',    family: "'Great Vibes', cursive",     size: '20px' },
+  { id: 'marker',   label: '✍',   name: 'Marker',     family: "'Permanent Marker', cursive", size: '15px' },
+];
+
+const STICKY_COLORS = [
+  { id: 'yellow', bg: '#f5e96b', shadow: '#c4b430', text: '#2a2004' },
+  { id: 'pink',   bg: '#ffd6e0', shadow: '#e8a0b0', text: '#3d0a1a' },
+  { id: 'mint',   bg: '#c8f0d8', shadow: '#80c89a', text: '#0a2e18' },
+  { id: 'blue',   bg: '#c8e4ff', shadow: '#80b4e0', text: '#0a1e38' },
+  { id: 'peach',  bg: '#ffd8b0', shadow: '#e0a060', text: '#3d1a00' },
+];
+
+let selectedStickyFont = 'caveat';
+let selectedStickyColor = 'yellow';
 
 const BACKGROUNDS = [
   { id:'bg-midnight', label:'Midnight', style:'background:radial-gradient(ellipse at 20% 50%,#1a1033,#0a0a0f)' },
@@ -750,8 +856,59 @@ function buildIpodPicker() {
   });
 }
 
-// ─────────────────────────────────────────────
-// SONG ROWS (CREATOR)
+function buildStickyPickers() {
+  // Font picker
+  const fontWrap = document.getElementById('stickyFontPicker');
+  STICKY_FONTS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'sticky-font-btn' + (f.id === selectedStickyFont ? ' selected' : '');
+    btn.title = f.name;
+    btn.style.fontFamily = f.family;
+    btn.textContent = f.name;
+    btn.onclick = () => {
+      document.querySelectorAll('.sticky-font-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedStickyFont = f.id;
+      applyStickyStyle();
+    };
+    fontWrap.appendChild(btn);
+  });
+
+  // Color picker
+  const colorWrap = document.getElementById('stickyColorPicker');
+  STICKY_COLORS.forEach(c => {
+    const btn = document.createElement('div');
+    btn.className = 'sticky-color-btn' + (c.id === selectedStickyColor ? ' selected' : '');
+    btn.style.background = c.bg;
+    btn.style.boxShadow = `0 2px 0 ${c.shadow} inset`;
+    btn.title = c.id.charAt(0).toUpperCase() + c.id.slice(1);
+    btn.onclick = () => {
+      document.querySelectorAll('.sticky-color-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedStickyColor = c.id;
+      applyStickyStyle();
+    };
+    colorWrap.appendChild(btn);
+  });
+}
+
+function applyStickyStyle() {
+  const font = STICKY_FONTS.find(f => f.id === selectedStickyFont);
+  const color = STICKY_COLORS.find(c => c.id === selectedStickyColor);
+  const editor = document.getElementById('stickyNoteEditor');
+  const textarea = document.getElementById('stickyText');
+  if (!editor || !font || !color) return;
+  editor.style.background = color.bg;
+  editor.style.boxShadow = `3px 4px 18px rgba(0,0,0,0.35), 0 1px 0 ${color.shadow} inset`;
+  textarea.style.fontFamily = font.family;
+  textarea.style.fontSize = font.size;
+  textarea.style.color = color.text;
+  // update placeholder colour via a dynamic style tag
+  let styleTag = document.getElementById('stickyPlaceholderStyle');
+  if (!styleTag) { styleTag = document.createElement('style'); styleTag.id = 'stickyPlaceholderStyle'; document.head.appendChild(styleTag); }
+  const rgba = hexToRgba(color.text, 0.4);
+  styleTag.textContent = `#stickyNoteEditor textarea::placeholder { color: ${rgba}; }`;
+}
 // ─────────────────────────────────────────────
 function addSongRow() {
   if (songRows.length >= MAX_SONGS) return;
@@ -943,7 +1100,8 @@ async function generateLink() {
   const note = document.getElementById('stickyToggle').checked
     ? document.getElementById('stickyText').value.trim() : '';
 
-  cardData = { tracks, note, bg: selectedBg, ipodColor: selectedIpodColor };
+  cardData = { tracks, note, bg: selectedBg, ipodColor: selectedIpodColor,
+    stickyFont: selectedStickyFont, stickyColor: selectedStickyColor };
   const encoded = btoa(encodeURIComponent(JSON.stringify(cardData)));
   document.getElementById('generatedLink').textContent =
     `${location.origin}${location.pathname}#drop=${encoded}`;
@@ -1108,7 +1266,7 @@ function updateScreenTrack(idx, animate) {
 
   below.innerHTML = `
     <a href="${escHtml(track.link || '')}" target="_blank" class="platform-badge ${bc}">${bi} ${bl}</a>
-    ${cardData.note ? `<div class="sticky-display"><p>${escHtml(cardData.note)}</p></div>` : ''}
+    ${cardData.note ? buildStickyDisplayHTML(cardData.note, cardData.stickyFont, cardData.stickyColor) : ''}
   `;
   below._stickyRendered = true;
 }
@@ -1224,6 +1382,58 @@ function destroyWheelListeners() {
 // ─────────────────────────────────────────────
 // UTILS
 // ─────────────────────────────────────────────
+function buildStickyDisplayHTML(note, fontId, colorId) {
+  const font  = STICKY_FONTS.find(f => f.id === fontId)  || STICKY_FONTS[0];
+  const color = STICKY_COLORS.find(c => c.id === colorId) || STICKY_COLORS[0];
+  return `<div class="sticky-display" style="background:${color.bg};box-shadow:3px 6px 20px rgba(0,0,0,0.4), 0 1px 0 ${color.shadow} inset;">
+    <p style="font-family:${font.family};font-size:${font.size};color:${color.text};">${escHtml(note)}</p>
+  </div>`;
+}
+
+function hexToRgba(hex, alpha) {
+  // hex can be #rrggbb or an rgb/rgba string from inline styles — handle both
+  const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+  if (!m) return `rgba(42,32,4,${alpha})`;
+  return `rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${alpha})`;
+}
+
+async function exportAsImage() {
+  if (!window.html2canvas) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  const overlay = document.getElementById('exportOverlay');
+  const btn = document.getElementById('btnExport');
+  const backBtn = document.querySelector('.back-btn');
+  overlay.classList.add('open');
+  btn.style.display = 'none';
+  backBtn.style.display = 'none';
+  try {
+    const viewer = document.getElementById('viewer');
+    const canvas = await html2canvas(viewer, {
+      useCORS: true, allowTaint: true, scale: 2,
+      backgroundColor: null, logging: false,
+      ignoreElements: el => el.classList.contains('export-overlay'),
+    });
+    const link = document.createElement('a');
+    link.download = 'songdrop.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('Image saved!');
+  } catch(e) {
+    console.error('Export failed:', e);
+    showToast('Export failed — try again');
+  } finally {
+    overlay.classList.remove('open');
+    btn.style.display = '';
+    backBtn.style.display = '';
+  }
+}
+
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -1254,6 +1464,7 @@ function isColorDark(hex) {
 // ─────────────────────────────────────────────
 buildBgPicker();
 buildIpodPicker();
+buildStickyPickers();
 addSongRow(); // start with one row
 setInterval(updateClock, 30000);
 
